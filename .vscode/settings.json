@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "ps3.h": "c",
+        "btm_api.h": "c",
+        "sensorfusion.h": "c",
+        "ps3controller.h": "c",
+        "task.h": "c",
+        "sensores.h": "c",
+        "controlmovimiento.h": "c"
+    }
+}

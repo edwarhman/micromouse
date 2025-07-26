@@ -1,0 +1,2 @@
+void maquinaDeEstados();
+void simularAvance();
