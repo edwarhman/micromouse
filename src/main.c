@@ -23,7 +23,9 @@
 #define MOTOR_B_OUTPUT_2 GPIO_NUM_19 // GPIO para el motor B
 #define MOTOR_B_ENABLE GPIO_NUM_21   // GPIO para el control de velocidad del motor B
 #define BUTTON GPIO_NUM_0
-#define VCC GPIO_NUM_15
+#define SENSOR_IZQUIERDO GPIO_NUM_15
+#define SENSOR_DERECHO GPIO_NUM_17
+#define SENSOR_FRONTAL GPIO_NUM_16
 
 void app_main(void)
 {
@@ -44,7 +46,9 @@ void app_main(void)
     setVelocidadMotorIzquierdo(500);
 
     SensoresConfig sensoresConfig = {
-        .sensorFrontal = GPIO_NUM_16,
+        .sensorFrontal = SENSOR_FRONTAL,
+        .sensorDerecho = SENSOR_DERECHO,
+        .sensorIzquierdo = SENSOR_IZQUIERDO,
     };
     inicializarSensores(sensoresConfig);
 
