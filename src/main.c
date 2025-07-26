@@ -29,7 +29,7 @@
 
 void app_main(void)
 {
-    ControlMovimientoConfig parametrosControlMomiviento = {
+    ControlMovimientoConfig configControlMomiviento = {
         .timerNumber = LEDC_TIMER_0,
         .rightMotorGpio1 = MOTOR_A_OUTPUT_1,
         .rightMotorGpio2 = MOTOR_A_OUTPUT_2,
@@ -41,16 +41,16 @@ void app_main(void)
         .maxVelocity = 1023,
     };
 
-    inicializarControlMovimiento(parametrosControlMomiviento);
+    inicializarControlMovimiento(configControlMomiviento);
     setVelocidadMotorDerecho(500);
     setVelocidadMotorIzquierdo(500);
 
-    SensoresConfig sensoresConfig = {
+    SensoresConfig configSensores = {
         .sensorFrontal = SENSOR_FRONTAL,
         .sensorDerecho = SENSOR_DERECHO,
         .sensorIzquierdo = SENSOR_IZQUIERDO,
     };
-    inicializarSensores(sensoresConfig);
+    inicializarSensores(configSensores);
 
     vTaskDelay(pdMS_TO_TICKS(5000)); // Wait for 5 seconds before starting
     avanzar();
