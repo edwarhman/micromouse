@@ -26,6 +26,7 @@
 #define SENSOR_IZQUIERDO GPIO_NUM_15
 #define SENSOR_DERECHO GPIO_NUM_17
 #define SENSOR_FRONTAL GPIO_NUM_16
+#define SENSOR_RUEDA_A GPIO_NUM_22 // GPIO para el sensor de rueda A
 
 void app_main(void)
 {
@@ -49,6 +50,7 @@ void app_main(void)
         .sensorFrontal = SENSOR_FRONTAL,
         .sensorDerecho = SENSOR_DERECHO,
         .sensorIzquierdo = SENSOR_IZQUIERDO,
+        .sensorRuedaA = SENSOR_RUEDA_A,
     };
     inicializarSensores(configSensores);
 
@@ -65,10 +67,13 @@ void app_main(void)
         if (gpio_get_level(BUTTON) == 0) // Button pressed
         {
             vTaskDelay(pdMS_TO_TICKS(150)); // Debounce delay
-            simularAvance();
+            // simularAvance();
+            reiniciarCuentaSensorRueda();
             printf("SIMULAR AVANCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         }
         maquinaDeEstados();
+        int cuentaRueda = obtenerCuentaSensorRueda();
+        printf("Cuenta del sensor de rueda A: %d\n", cuentaRueda);
         vTaskDelay(pdMS_TO_TICKS(1000)); // Polling delay
     }
 }
