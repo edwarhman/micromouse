@@ -19,6 +19,7 @@ typedef struct
     int sensorDerecho;
     int sensorIzquierdo;
     int nivelSensorSonico;
+    int cuentaSensorRueda;
 } SensoresData;
 
 void inicializarSensores(SensoresConfig);

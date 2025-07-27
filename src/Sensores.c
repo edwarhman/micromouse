@@ -125,6 +125,7 @@ SensoresData obtenerDatosSensores()
     datos.sensorDerecho = leerSensorDerecho();
     datos.sensorIzquierdo = leerSensorIzquierdo();
     datos.nivelSensorSonico = medirDistanciaSensorSonico();
+    datos.cuentaSensorRueda = obtenerCuentaSensorRueda();
 
     return datos;
 }
