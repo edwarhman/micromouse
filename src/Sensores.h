@@ -27,6 +27,7 @@ int leerSensorFrontal();
 int leerSensorDerecho();
 int leerSensorIzquierdo();
 int medirDistanciaSensorSonico();
+SensoresData obtenerDatosSensores();
 int obtenerCuentaSensorRueda();
 int reiniciarCuentaSensorRueda();
 
