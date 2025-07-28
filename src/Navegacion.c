@@ -2,8 +2,8 @@
 #include "ControlMovimiento.h"
 #include "Navegacion.h"
 
-#define PASOS_AVANCE_DE_CASILLA 7
-#define PASOS_GIRO_90_GRADOS 4
+#define PASOS_AVANCE_DE_CASILLA 4
+#define PASOS_GIRO_90_GRADOS 2
 
 enum EstadoCarro
 {
@@ -111,6 +111,11 @@ int obtenerCasillaSiguiente()
     default:
         return 0; // Sentido no válido
     }
+}
+
+int obtenerCasillaActual()
+{
+    return laberinto[posicionActual[0]][posicionActual[1]];
 }
 
 // TODO: Implementar lógica de resolución del laberinto
@@ -264,17 +269,34 @@ void imprimirSentido(int sentido)
         printf("NORTE\n");
         break;
     case 1:
-        printf("DERECHA\n");
+        printf("ESTE\n");
         break;
     case 2:
         printf("SUR\n");
         break;
     case 3:
-        printf("IZQUIERDA\n");
+        printf("OESTE\n");
         break;
     default:
         printf("Sentido no válido\n");
         break;
+    }
+}
+
+char *obtenerCadenaEstado(int estado)
+{
+    switch (estado)
+    {
+    case AVANZANDO:
+        return "AVANZANDO";
+    case FRENANDO:
+        return "FRENANDO";
+    case DETENIDO:
+        return "DETENIDO";
+    case GIRANDO:
+        return "GIRANDO";
+    default:
+        return "ESTADO DESCONOCIDO";
     }
 }
 
@@ -321,7 +343,6 @@ void maquinaDeEstados()
         printf("Estamos en estado detenido \n");
         break;
     case GIRANDO:
-        printf("Estado GIRANDO");
         manejarGiroDe90Grados();
         break;
 
@@ -329,14 +350,19 @@ void maquinaDeEstados()
         break;
     }
     actualizarPosicionObjetivo();
-    printf("Estado actual: %d\n", estado);
+    printf("Estado actual: %s\n", obtenerCadenaEstado(estado));
     printf("Posición actual: [%d, %d]\n", posicionActual[0], posicionActual[1]);
     printf("Posición objetivo: [%d, %d]\n", posicionObjetivo[0], posicionObjetivo[1]);
+    printf("Sentido actual: ");
     imprimirSentido(sentidoActual);
+    printf("Sentido objetivo: ");
     imprimirSentido(sentidoObjetivo);
     printf("Datos sensores: Frontal: %d, Derecho: %d, Izquierdo: %d, Sonico: %d\n",
            datosSensores.sensorFrontal, datosSensores.sensorDerecho, datosSensores.sensorIzquierdo, datosSensores.nivelSensorSonico);
 
+    printf("Valor casilla siguiente: %d\n", obtenerCasillaSiguiente());
+    printf("Valor casilla actual: %d\n", obtenerCasillaActual());
+    printf("Paso simulación: %d\n", pasosMockup);
     datosSensores.cuentaSensorRueda = obtenerCuentaSensorRueda(); // TODO: sustituir por la función real de obtención de datos sensores
     // datosSensores = obtenerDatosSensores(); // Actualizar datosSensores con la función real
 }

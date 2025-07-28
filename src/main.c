@@ -69,7 +69,6 @@ void app_main(void)
             vTaskDelay(pdMS_TO_TICKS(150)); // Debounce delay
             // simularAvance();
             reiniciarCuentaSensorRueda();
-            printf("SIMULAR AVANCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         }
         maquinaDeEstados();
         int cuentaRueda = obtenerCuentaSensorRueda();
