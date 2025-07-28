@@ -23,28 +23,27 @@ typedef struct
 
 // frontal, derecho, izquierdo, nivelSonico
 MockupSensores mockupSensores[] = {
-    {1, 0, 1, 10}, // avance 1
-    {0, 0, 1, 10}, // frenada 2
-    {1, 0, 1, 20}, // avance 2
-    {0, 0, 1, 20}, // frenada 4
-    {1, 1, 0, 30}, // avance 3
-    {0, 1, 0, 30}, // frenada 6
-    {1, 1, 0, 40}, // avance 4
-    {0, 1, 0, 40}, // frenada 8
-    {0, 1, 1, 40}, // avance 5
-    {0, 1, 0, 40}, // avance 6
-    {1, 1, 1, 50}, // avance 7
-    {1, 0, 1, 50}, // frenada 10
-    {0, 1, 1, 60}, // avance 8
-    {0, 0, 1, 60},
-    {0, 0, 0, 60}, // avance 9
-    {0, 1, 1, 10}, // avance 10
-    {1, 0, 1, 20}, // Mockup data for frontal sensor
-    {1, 0, 1, 20}, // Mockup data for frontal sensor
-    {0, 0, 1, 20}, // Mockup data for frontal sensor
-    {1, 0, 1, 20}, // Mockup data for frontal sensor
-    {0, 0, 1, 20}, // Mockup data for frontal sensor
-    {1, 1, 1, 20}, // Mockup data for frontal sensor
+    {1, 0, 1, 10}, // paso 0
+    {0, 0, 1, 10}, // paso 1
+    {1, 0, 1, 20}, // paso 2
+    {0, 0, 1, 20}, // paso 3
+    {1, 1, 0, 30}, // paso 4
+    {0, 1, 0, 30}, // paso 5
+    {1, 1, 0, 40}, // paso 6
+    {0, 1, 0, 40}, // paso 7
+    {0, 1, 1, 40}, // paso 8
+    {0, 1, 0, 40}, // paso 9
+    {1, 1, 1, 50}, // paso 10
+    {1, 0, 1, 50}, // paso 11
+    {0, 1, 1, 60}, // paso 12
+    {0, 0, 1, 60}, // paso 13
+    {0, 0, 0, 60}, // paso 14
+    {0, 1, 1, 10}, // paso 15
+    {1, 0, 1, 20}, // paso 16
+    {0, 0, 1, 20}, // paso 17
+    {1, 0, 1, 20}, // paso 18
+    {0, 0, 1, 20}, // paso 19
+    {1, 1, 1, 20}, // paso 20
 };
 int pasosMockup = 0;
 
