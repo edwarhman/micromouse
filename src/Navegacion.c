@@ -2,6 +2,9 @@
 #include "ControlMovimiento.h"
 #include "Navegacion.h"
 
+#define PASOS_AVANCE_DE_CASILLA 7
+#define PASOS_GIRO_90_GRADOS 4
+
 enum EstadoCarro
 {
     AVANZANDO,
@@ -18,6 +21,7 @@ typedef struct
     int nivelSensorSonico;
 } MockupSensores;
 
+// frontal, derecho, izquierdo, nivelSonico
 MockupSensores mockupSensores[] = {
     {1, 0, 1, 10}, // avance 1
     {0, 0, 1, 10}, // frenada 2
@@ -31,12 +35,16 @@ MockupSensores mockupSensores[] = {
     {0, 1, 0, 40}, // avance 6
     {1, 1, 1, 50}, // avance 7
     {1, 0, 1, 50}, // frenada 10
-
-    {0, 0, 1, 60}, // avance 8
-    {0, 0, 0, 60},
-    {0, 1, 1, 60}, // avance 9
-    {1, 0, 1, 10}, // avance 10
+    {0, 1, 1, 60}, // avance 8
+    {0, 0, 1, 60},
+    {0, 0, 0, 60}, // avance 9
+    {0, 1, 1, 10}, // avance 10
     {1, 0, 1, 20}, // Mockup data for frontal sensor
+    {1, 0, 1, 20}, // Mockup data for frontal sensor
+    {0, 0, 1, 20}, // Mockup data for frontal sensor
+    {1, 0, 1, 20}, // Mockup data for frontal sensor
+    {0, 0, 1, 20}, // Mockup data for frontal sensor
+    {1, 1, 1, 20}, // Mockup data for frontal sensor
 };
 int pasosMockup = 0;
 
@@ -46,6 +54,7 @@ int posicionActual[2] = {0, 0};   // {fila, columna}
 int posicionObjetivo[2] = {1, 0}; // {fila, columna}
 int sentidoActual = 0;            // 0: adelante, 1: derecha, 2: atras, 3: izquierda
 int sentidoObjetivo = 0;          // 0: adelante, 1: derecha, 2: atras, 3: izquierda
+int proximoSentido = 0;           // Variable auxiliar para almacenar el sentido al que gira después de girar
 SensoresData datosSensores;
 
 int estaEnPosicionObjetivo()
@@ -71,9 +80,36 @@ void decrementarSentido(int *sentido)
     }
 }
 
+int obtenerCasillaSegura(int fila, int columna)
+{
+    if (fila < 0 || fila >= 4 || columna < 0 || columna >= 3)
+    {
+        return -1; // Fuera de rango
+    }
+    return laberinto[fila][columna]; // Retorna el valor de la casilla
+}
+
+int obtenerCasillaSiguiente(int fila, int columna, int sentido)
+{
+    switch (sentido)
+    {
+    case 0: // adelante
+        return obtenerCasillaSegura(fila + 1, columna);
+    case 1: // derecha
+        return obtenerCasillaSegura(fila, columna + 1);
+    case 2: // atras
+        return obtenerCasillaSegura(fila - 1, columna);
+    case 3: // izquierda
+        return obtenerCasillaSegura(fila, columna - 1);
+    default:
+        return 0; // Sentido no válido
+    }
+}
+
 // TODO: Implementar lógica de resolución del laberinto
 void actualizarSentidoObjetivo()
 {
+    int casillaFrontal = obtenerCasillaSiguiente(posicionActual[0], posicionActual[1], sentidoActual);
     if (datosSensores.sensorFrontal == 1 || estaEnPosicionObjetivo())
     {
         if (datosSensores.sensorDerecho == 0)
@@ -149,37 +185,92 @@ void girarSentidoDeseado()
         if (diferencia == 1 || diferencia == -3)
         {
             girarDerecha();
-            incrementarSentido(&sentidoActual);
+            incrementarSentido(&proximoSentido);
         }
         else if (diferencia == -1 || diferencia == 3)
         {
             girarIzquierda();
-            decrementarSentido(&sentidoActual);
+            decrementarSentido(&proximoSentido);
         }
         else if (diferencia == 2 || diferencia == -2)
         {
             girarDerecha();
-            incrementarSentido(&sentidoActual);
+            incrementarSentido(&proximoSentido);
         }
+    }
+}
+
+void actualizarLaberinto(int fila, int columna, int valor)
+{
+    if (fila < 0 || fila >= 4 || columna < 0 || columna >= 3)
+    {
+        printf("Índice fuera de rango al actualizar el laberinto.\n");
+        return;
+    }
+    laberinto[fila][columna] = valor;
+}
+
+void manejarCambioDeCasilla()
+{
+    if (datosSensores.cuentaSensorRueda >= PASOS_AVANCE_DE_CASILLA)
+    {
+        reiniciarCuentaSensorRueda();
+        actualizarLaberinto(posicionActual[0], posicionActual[1], 2); // Marcar casilla como visitada
+        actualizarPosicionActual();
+
+        printf("Casilla visitada: [%d, %d]\n", posicionActual[0], posicionActual[1]);
+        simularAvance();
+    }
+}
+
+void manejarGiroDe90Grados()
+{
+    if (datosSensores.cuentaSensorRueda >= PASOS_GIRO_90_GRADOS)
+    {
+        reiniciarCuentaSensorRueda();
+        printf("Giro de 90 grados completado.\n");
+        sentidoActual = proximoSentido; // Actualizar sentido actual al sentido al que se ha girado
+        printf("Sentido actual actualizado a: %d\n", sentidoActual);
+        estado = FRENANDO; // Cambiar estado a FRENANDO después del giro
+        detener();         // Detener el carro después del giro
+        simularAvance();   // Simular avance después del giro
     }
 }
 
 void simularAvance()
 {
-    if (pasosMockup >= 16)
+    printf("SIMULAR AVANCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    if (pasosMockup >= 22)
     {
         return;
-    }
-    if (datosSensores.sensorFrontal != 1)
-    {
-
-        actualizarPosicionActual();
     }
     datosSensores.sensorFrontal = mockupSensores[pasosMockup].sensorFrontal;
     datosSensores.sensorDerecho = mockupSensores[pasosMockup].sensorDerecho;
     datosSensores.sensorIzquierdo = mockupSensores[pasosMockup].sensorIzquierdo;
     datosSensores.nivelSensorSonico = mockupSensores[pasosMockup].nivelSensorSonico;
     pasosMockup++;
+}
+
+void imprimirSentido(int sentido)
+{
+    switch (sentido)
+    {
+    case 0:
+        printf("NORTE\n");
+        break;
+    case 1:
+        printf("DERECHA\n");
+        break;
+    case 2:
+        printf("SUR\n");
+        break;
+    case 3:
+        printf("IZQUIERDA\n");
+        break;
+    default:
+        printf("Sentido no válido\n");
+        break;
+    }
 }
 
 void maquinaDeEstados()
@@ -193,6 +284,7 @@ void maquinaDeEstados()
             detener();
             estado = FRENANDO;
         }
+        manejarCambioDeCasilla();
         break;
     case FRENANDO:
         printf("Estado FRENANDO\n");
@@ -225,19 +317,7 @@ void maquinaDeEstados()
         break;
     case GIRANDO:
         printf("Estado GIRANDO");
-        if (estaEnSentidoObjetivo()) // sustituir cuando se pueda obtener la posición de la rueda
-        {
-            estado = FRENANDO;
-            simularAvance();
-            printf("SIMULANDO GIRO!!!!.\n");
-            detener();
-            printf("Cambiando a estado FRENANDO en la maquina de estados.\n");
-        }
-        else
-        {
-            printf("Girando hacia el sentido deseado.\n");
-        }
-
+        manejarGiroDe90Grados();
         break;
 
     default:
@@ -246,9 +326,12 @@ void maquinaDeEstados()
     actualizarPosicionObjetivo();
     printf("Estado actual: %d\n", estado);
     printf("Posición actual: [%d, %d]\n", posicionActual[0], posicionActual[1]);
-    printf("Sentido actual: %d\n", sentidoActual);
-    printf("Sentido objetivo: %d\n", sentidoObjetivo);
     printf("Posición objetivo: [%d, %d]\n", posicionObjetivo[0], posicionObjetivo[1]);
+    imprimirSentido(sentidoActual);
+    imprimirSentido(sentidoObjetivo);
     printf("Datos sensores: Frontal: %d, Derecho: %d, Izquierdo: %d, Sonico: %d\n",
            datosSensores.sensorFrontal, datosSensores.sensorDerecho, datosSensores.sensorIzquierdo, datosSensores.nivelSensorSonico);
+
+    datosSensores.cuentaSensorRueda = obtenerCuentaSensorRueda(); // TODO: sustituir por la función real de obtención de datos sensores
+    // datosSensores = obtenerDatosSensores(); // Actualizar datosSensores con la función real
 }
