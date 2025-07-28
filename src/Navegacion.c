@@ -89,8 +89,11 @@ int obtenerCasillaSegura(int fila, int columna)
     return laberinto[fila][columna]; // Retorna el valor de la casilla
 }
 
-int obtenerCasillaSiguiente(int fila, int columna, int sentido)
+int obtenerCasillaSiguiente()
 {
+    int fila = posicionActual[0];
+    int columna = posicionActual[1];
+    int sentido = sentidoActual;
     switch (sentido)
     {
     case 0: // adelante
@@ -109,7 +112,7 @@ int obtenerCasillaSiguiente(int fila, int columna, int sentido)
 // TODO: Implementar lógica de resolución del laberinto
 void actualizarSentidoObjetivo()
 {
-    int casillaFrontal = obtenerCasillaSiguiente(posicionActual[0], posicionActual[1], sentidoActual);
+    int casillaFrontal = obtenerCasillaSiguiente();
     if (datosSensores.sensorFrontal == 1 || estaEnPosicionObjetivo())
     {
         if (datosSensores.sensorDerecho == 0)
@@ -149,9 +152,12 @@ void actualizarPosicionActual()
 
 void actualizarPosicionObjetivo()
 {
-    if (!estaEnPosicionObjetivo() || datosSensores.sensorFrontal == 1)
+    if (
+        !estaEnSentidoObjetivo() ||
+        !estaEnPosicionObjetivo() ||
+        datosSensores.sensorFrontal == 1 ||
+        ((datosSensores.sensorDerecho == 0 || datosSensores.sensorIzquierdo == 0) && obtenerCasillaSiguiente() > 0))
     {
-        printf("Ya estamos en la posición objetivo o hay pared al frente.\n");
         return;
     }
     if (sentidoObjetivo == 0)
