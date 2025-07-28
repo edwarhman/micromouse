@@ -61,6 +61,11 @@ int estaEnPosicionObjetivo()
     return (posicionActual[0] == posicionObjetivo[0] && posicionActual[1] == posicionObjetivo[1]);
 }
 
+int estaEnSentidoObjetivo()
+{
+    return sentidoActual == sentidoObjetivo;
+}
+
 void incrementarSentido(int *sentido)
 {
     (*sentido)++;
@@ -175,11 +180,6 @@ void actualizarPosicionObjetivo()
     {
         posicionObjetivo[1] -= 1; // izquierda
     }
-}
-
-int estaEnSentidoObjetivo()
-{
-    return sentidoActual == sentidoObjetivo;
 }
 
 void girarSentidoDeseado()
