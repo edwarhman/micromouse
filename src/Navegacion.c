@@ -2,11 +2,18 @@
 #include "ControlMovimiento.h"
 #include "Navegacion.h"
 
+// Número de pasos que representa avanzar una casilla
 #define PASOS_AVANCE_DE_CASILLA 4
+// Número de pasos que representa un giro de 90 grados
 #define PASOS_GIRO_90_GRADOS 2
+// Dimensiones del laberinto
 #define LABERINTO_FILAS 4
 #define LABERINTO_COLUMNAS 3
 
+/**
+ * @brief Sentidos posibles del carro
+ * NORTE: adelante, ESTE: derecha, SUR: atrás, OESTE: izquierda
+ */
 typedef enum
 {
     NORTE = 0,
@@ -15,6 +22,9 @@ typedef enum
     OESTE = 3
 } SentidoCarro;
 
+/**
+ * @brief Estados posibles de la máquina de estados del carro
+ */
 typedef enum
 {
     AVANZANDO = 0,
@@ -23,6 +33,9 @@ typedef enum
     GIRANDO = 3
 } EstadoCarro;
 
+/**
+ * @brief Estructura para simular los valores de los sensores
+ */
 typedef struct
 {
     int sensorFrontal;
@@ -57,25 +70,42 @@ MockupSensores mockupSensores[] = {
 };
 int pasosMockup = 0;
 
+// Estado actual de la máquina de estados
 EstadoCarro estado = AVANZANDO;
+// Representación del laberinto (0: libre, 2: visitado)
 int laberinto[LABERINTO_FILAS][LABERINTO_COLUMNAS];
-int posicionActual[2] = {0, 0};   // {fila, columna}
-int posicionObjetivo[2] = {1, 0}; // {fila, columna}
+// Posición actual y objetivo en el laberinto {fila, columna}
+int posicionActual[2] = {0, 0};
+int posicionObjetivo[2] = {1, 0};
+// Sentidos actuales y objetivo
 SentidoCarro sentidoActual = NORTE;
 SentidoCarro sentidoObjetivo = NORTE;
 SentidoCarro proximoSentido = NORTE;
+// Estructura con los datos actuales de los sensores
 SensoresData datosSensores;
 
+/**
+ * @brief Verifica si el carro está en la posición objetivo
+ * @return 1 si está en la posición objetivo, 0 en caso contrario
+ */
 int estaEnPosicionObjetivo()
 {
     return (posicionActual[0] == posicionObjetivo[0] && posicionActual[1] == posicionObjetivo[1]);
 }
 
+/**
+ * @brief Verifica si el carro está orientado en el sentido objetivo
+ * @return 1 si está en el sentido objetivo, 0 en caso contrario
+ */
 int estaEnSentidoObjetivo()
 {
     return sentidoActual == sentidoObjetivo;
 }
 
+/**
+ * @brief Incrementa el sentido (gira a la derecha)
+ * @param sentido Puntero al sentido a modificar
+ */
 void incrementarSentido(SentidoCarro *sentido)
 {
     (*sentido)++;
@@ -85,6 +115,10 @@ void incrementarSentido(SentidoCarro *sentido)
     }
 }
 
+/**
+ * @brief Decrementa el sentido (gira a la izquierda)
+ * @param sentido Puntero al sentido a modificar
+ */
 void decrementarSentido(SentidoCarro *sentido)
 {
     (*sentido)--;
@@ -94,6 +128,12 @@ void decrementarSentido(SentidoCarro *sentido)
     }
 }
 
+/**
+ * @brief Obtiene el valor de una casilla del laberinto, validando los límites
+ * @param fila Fila de la casilla
+ * @param columna Columna de la casilla
+ * @return Valor de la casilla o -1 si está fuera de rango
+ */
 int obtenerCasillaSegura(int fila, int columna)
 {
     if (fila < 0 || fila >= LABERINTO_FILAS || columna < 0 || columna >= LABERINTO_COLUMNAS)
@@ -103,6 +143,10 @@ int obtenerCasillaSegura(int fila, int columna)
     return laberinto[fila][columna]; // Retorna el valor de la casilla
 }
 
+/**
+ * @brief Obtiene el valor de la casilla hacia la que apunta el sentido actual
+ * @return Valor de la casilla siguiente
+ */
 int obtenerCasillaSiguiente()
 {
     int fila = posicionActual[0];
@@ -122,11 +166,18 @@ int obtenerCasillaSiguiente()
     }
 }
 
+/**
+ * @brief Obtiene el valor de la casilla actual
+ * @return Valor de la casilla actual
+ */
 int obtenerCasillaActual()
 {
     return laberinto[posicionActual[0]][posicionActual[1]];
 }
 
+/**
+ * @brief Actualiza el sentido objetivo según los sensores y la posición
+ */
 void actualizarSentidoObjetivo()
 {
     if (datosSensores.sensorFrontal == 1 || estaEnPosicionObjetivo())
@@ -146,6 +197,11 @@ void actualizarSentidoObjetivo()
     }
 }
 
+/**
+ * @brief Mueve la posición indicada en el sentido dado
+ * @param pos Vector {fila, columna} a modificar
+ * @param sentido Sentido en el que se mueve
+ */
 void moverPosicion(int *pos, SentidoCarro sentido)
 {
     switch (sentido)
@@ -296,6 +352,9 @@ char *obtenerCadenaEstado(EstadoCarro estado)
     }
 }
 
+/**
+ * @brief Imprime el estado actual del robot y sus sensores
+ */
 void imprimirEstadoRobot()
 {
     printf("Estado actual: %s\n", obtenerCadenaEstado(estado));
