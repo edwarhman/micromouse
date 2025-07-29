@@ -12,35 +12,6 @@ gpio_num_t motorDerechoInput1 = 0;
 gpio_num_t motorDerechoInput2 = 0;
 int detenido = 0;
 
-// Callback para detener los motores a traves del temporizador
-// void _detener()
-// {
-//     detenido = 1;
-//     gpio_set_level(motorIzquierdoInput1, 0);
-//     gpio_set_level(motorIzquierdoInput2, 0);
-//     gpio_set_level(motorDerechoInput1, 0);
-//     gpio_set_level(motorDerechoInput2, 0);
-//     esp_timer_delete(timer_detener);
-//     printf("El estado cambió a detenido\n");
-// }
-
-// // Configuración del temporizador para detener el carro
-// esp_timer_create_args_t timer_detener_args = {
-//     .arg = NULL,
-//     .dispatch_method = ESP_TIMER_TASK,
-//     .name = "timer_detener",
-//     .callback = &_detener,
-// };
-
-// // LEDC Timer Configuration
-// ledc_timer_config_t ledc_timer_config_data = {
-//     .speed_mode = LEDC_LOW_SPEED_MODE,
-//     .duty_resolution = LEDC_TIMER_10_BIT,
-//     .timer_num = LEDC_TIMER_0,
-//     .freq_hz = 5000, // 5 kHz
-//     .clk_cfg = LEDC_AUTO_CLK,
-// };
-
 // Configuración Canal A (Motor Izquierdo)
 ledc_channel_config_t ledc_channel_a_config = {
     .gpio_num = 0, // Placeholder, will be set in initialization
@@ -76,14 +47,6 @@ void setMotorDerecho(gpio_num_t input1, gpio_num_t input2, gpio_num_t inputEnabl
     motorDerechoInput2 = input2;
     motorDerechoEnable = inputEnable;
 }
-
-// void detenerDespuesDeTiempo(int timeout_us)
-// {
-//     // Detener los motores
-//     esp_timer_create(&timer_detener_args, &timer_detener);
-//     esp_timer_start_once(timer_detener, timeout_us);
-//     printf("Motores detenidos después del tiempo.\n");
-// }
 
 void detener()
 {

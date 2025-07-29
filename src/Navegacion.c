@@ -120,7 +120,6 @@ int obtenerCasillaActual()
 
 void actualizarSentidoObjetivo()
 {
-    int casillaFrontal = obtenerCasillaSiguiente();
     if (datosSensores.sensorFrontal == 1 || estaEnPosicionObjetivo())
     {
         if (datosSensores.sensorDerecho == 0)
