@@ -4,14 +4,24 @@
 
 #define PASOS_AVANCE_DE_CASILLA 4
 #define PASOS_GIRO_90_GRADOS 2
+#define LABERINTO_FILAS 4
+#define LABERINTO_COLUMNAS 3
 
-enum EstadoCarro
+typedef enum
 {
-    AVANZANDO,
-    FRENANDO,
-    DETENIDO,
-    GIRANDO
-};
+    NORTE = 0,
+    ESTE = 1,
+    SUR = 2,
+    OESTE = 3
+} SentidoCarro;
+
+typedef enum
+{
+    AVANZANDO = 0,
+    FRENANDO = 1,
+    DETENIDO = 2,
+    GIRANDO = 3
+} EstadoCarro;
 
 typedef struct
 {
@@ -47,13 +57,13 @@ MockupSensores mockupSensores[] = {
 };
 int pasosMockup = 0;
 
-enum EstadoCarro estado = AVANZANDO;
-int laberinto[4][3];
+EstadoCarro estado = AVANZANDO;
+int laberinto[LABERINTO_FILAS][LABERINTO_COLUMNAS];
 int posicionActual[2] = {0, 0};   // {fila, columna}
 int posicionObjetivo[2] = {1, 0}; // {fila, columna}
-int sentidoActual = 0;            // 0: adelante, 1: derecha, 2: atras, 3: izquierda
-int sentidoObjetivo = 0;          // 0: adelante, 1: derecha, 2: atras, 3: izquierda
-int proximoSentido = 0;           // Variable auxiliar para almacenar el sentido al que gira después de girar
+SentidoCarro sentidoActual = NORTE;
+SentidoCarro sentidoObjetivo = NORTE;
+SentidoCarro proximoSentido = NORTE;
 SensoresData datosSensores;
 
 int estaEnPosicionObjetivo()
@@ -66,27 +76,27 @@ int estaEnSentidoObjetivo()
     return sentidoActual == sentidoObjetivo;
 }
 
-void incrementarSentido(int *sentido)
+void incrementarSentido(SentidoCarro *sentido)
 {
     (*sentido)++;
-    if (*sentido > 3)
+    if (*sentido > OESTE)
     {
-        *sentido = 0;
+        *sentido = NORTE;
     }
 }
 
-void decrementarSentido(int *sentido)
+void decrementarSentido(SentidoCarro *sentido)
 {
     (*sentido)--;
-    if (*sentido < 0)
+    if (*sentido < NORTE)
     {
-        *sentido = 3;
+        *sentido = OESTE;
     }
 }
 
 int obtenerCasillaSegura(int fila, int columna)
 {
-    if (fila < 0 || fila >= 4 || columna < 0 || columna >= 3)
+    if (fila < 0 || fila >= LABERINTO_FILAS || columna < 0 || columna >= LABERINTO_COLUMNAS)
     {
         return -1; // Fuera de rango
     }
@@ -97,16 +107,15 @@ int obtenerCasillaSiguiente()
 {
     int fila = posicionActual[0];
     int columna = posicionActual[1];
-    int sentido = sentidoActual;
-    switch (sentido)
+    switch (sentidoActual)
     {
-    case 0: // adelante
+    case NORTE:
         return obtenerCasillaSegura(fila + 1, columna);
-    case 1: // derecha
+    case ESTE:
         return obtenerCasillaSegura(fila, columna + 1);
-    case 2: // atras
+    case SUR:
         return obtenerCasillaSegura(fila - 1, columna);
-    case 3: // izquierda
+    case OESTE:
         return obtenerCasillaSegura(fila, columna - 1);
     default:
         return 0; // Sentido no válido
@@ -137,20 +146,20 @@ void actualizarSentidoObjetivo()
     }
 }
 
-void moverPosicion(int *pos, int sentido)
+void moverPosicion(int *pos, SentidoCarro sentido)
 {
     switch (sentido)
     {
-    case 0:
+    case NORTE:
         pos[0] += 1; // adelante
         break;
-    case 1:
+    case ESTE:
         pos[1] += 1; // derecha
         break;
-    case 2:
+    case SUR:
         pos[0] -= 1; // atras
         break;
-    case 3:
+    case OESTE:
         pos[1] -= 1; // izquierda
         break;
     }
@@ -248,20 +257,20 @@ void simularAvance()
     pasosMockup++;
 }
 
-void imprimirSentido(int sentido)
+void imprimirSentido(SentidoCarro sentido)
 {
     switch (sentido)
     {
-    case 0:
+    case NORTE:
         printf("NORTE\n");
         break;
-    case 1:
+    case ESTE:
         printf("ESTE\n");
         break;
-    case 2:
+    case SUR:
         printf("SUR\n");
         break;
-    case 3:
+    case OESTE:
         printf("OESTE\n");
         break;
     default:
@@ -270,7 +279,7 @@ void imprimirSentido(int sentido)
     }
 }
 
-char *obtenerCadenaEstado(int estado)
+char *obtenerCadenaEstado(EstadoCarro estado)
 {
     switch (estado)
     {
