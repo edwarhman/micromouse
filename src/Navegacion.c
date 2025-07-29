@@ -118,7 +118,6 @@ int obtenerCasillaActual()
     return laberinto[posicionActual[0]][posicionActual[1]];
 }
 
-// TODO: Implementar lógica de resolución del laberinto
 void actualizarSentidoObjetivo()
 {
     int casillaFrontal = obtenerCasillaSiguiente();
@@ -139,24 +138,28 @@ void actualizarSentidoObjetivo()
     }
 }
 
+void moverPosicion(int *pos, int sentido)
+{
+    switch (sentido)
+    {
+    case 0:
+        pos[0] += 1; // adelante
+        break;
+    case 1:
+        pos[1] += 1; // derecha
+        break;
+    case 2:
+        pos[0] -= 1; // atras
+        break;
+    case 3:
+        pos[1] -= 1; // izquierda
+        break;
+    }
+}
+
 void actualizarPosicionActual()
 {
-    if (sentidoActual == 0)
-    {
-        posicionActual[0] += 1; // adelante
-    }
-    else if (sentidoActual == 1)
-    {
-        posicionActual[1] += 1; // derecha
-    }
-    else if (sentidoActual == 2)
-    {
-        posicionActual[0] -= 1; // atras
-    }
-    else if (sentidoActual == 3)
-    {
-        posicionActual[1] -= 1; // izquierda
-    }
+    moverPosicion(posicionActual, sentidoActual);
 }
 
 void actualizarPosicionObjetivo()
@@ -169,22 +172,7 @@ void actualizarPosicionObjetivo()
     {
         return;
     }
-    if (sentidoObjetivo == 0)
-    {
-        posicionObjetivo[0] += 1; // adelante
-    }
-    else if (sentidoObjetivo == 1)
-    {
-        posicionObjetivo[1] += 1; // derecha
-    }
-    else if (sentidoObjetivo == 2)
-    {
-        posicionObjetivo[0] -= 1; // atras
-    }
-    else if (sentidoObjetivo == 3)
-    {
-        posicionObjetivo[1] -= 1; // izquierda
-    }
+    moverPosicion(posicionObjetivo, sentidoObjetivo);
 }
 
 void girarSentidoDeseado()
