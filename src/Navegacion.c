@@ -296,6 +296,22 @@ char *obtenerCadenaEstado(EstadoCarro estado)
     }
 }
 
+void imprimirEstadoRobot()
+{
+    printf("Estado actual: %s\n", obtenerCadenaEstado(estado));
+    printf("Posición actual: [%d, %d]\n", posicionActual[0], posicionActual[1]);
+    printf("Posición objetivo: [%d, %d]\n", posicionObjetivo[0], posicionObjetivo[1]);
+    printf("Sentido actual: ");
+    imprimirSentido(sentidoActual);
+    printf("Sentido objetivo: ");
+    imprimirSentido(sentidoObjetivo);
+    printf("Datos sensores: Frontal: %d, Derecho: %d, Izquierdo: %d, Sonico: %d\n",
+           datosSensores.sensorFrontal, datosSensores.sensorDerecho, datosSensores.sensorIzquierdo, datosSensores.nivelSensorSonico);
+    printf("Valor casilla siguiente: %d\n", obtenerCasillaSiguiente());
+    printf("Valor casilla actual: %d\n", obtenerCasillaActual());
+    printf("Paso simulación: %d\n", pasosMockup);
+}
+
 void maquinaDeEstados()
 {
     switch (estado)
@@ -346,19 +362,7 @@ void maquinaDeEstados()
         break;
     }
     actualizarPosicionObjetivo();
-    printf("Estado actual: %s\n", obtenerCadenaEstado(estado));
-    printf("Posición actual: [%d, %d]\n", posicionActual[0], posicionActual[1]);
-    printf("Posición objetivo: [%d, %d]\n", posicionObjetivo[0], posicionObjetivo[1]);
-    printf("Sentido actual: ");
-    imprimirSentido(sentidoActual);
-    printf("Sentido objetivo: ");
-    imprimirSentido(sentidoObjetivo);
-    printf("Datos sensores: Frontal: %d, Derecho: %d, Izquierdo: %d, Sonico: %d\n",
-           datosSensores.sensorFrontal, datosSensores.sensorDerecho, datosSensores.sensorIzquierdo, datosSensores.nivelSensorSonico);
-
-    printf("Valor casilla siguiente: %d\n", obtenerCasillaSiguiente());
-    printf("Valor casilla actual: %d\n", obtenerCasillaActual());
-    printf("Paso simulación: %d\n", pasosMockup);
+    imprimirEstadoRobot();
     datosSensores.cuentaSensorRueda = obtenerCuentaSensorRueda(); // TODO: sustituir por la función real de obtención de datos sensores
     // datosSensores = obtenerDatosSensores(); // Actualizar datosSensores con la función real
 }
