@@ -40,6 +40,10 @@ pcnt_glitch_filter_config_t filter_config = {
 FIN CONFIGURACIÓN DEL SENSOR DE RUEDAS
 */
 
+/**
+ * @brief Inicializa el sensor de ruedas usando el periférico PCNT.
+ * Configura el canal, el filtro de glitches y habilita el contador.
+ */
 void inicializarSensorRuedas()
 {
     ESP_ERROR_CHECK(pcnt_new_unit(
@@ -54,6 +58,10 @@ void inicializarSensorRuedas()
     ESP_ERROR_CHECK(pcnt_unit_start(pulse_cnt_unit));
 }
 
+/**
+ * @brief Inicializa los sensores de distancia y de rueda.
+ * @param sensoresConfig Estructura con los pines de los sensores.
+ */
 void inicializarSensores(SensoresConfig sensoresConfig)
 {
     sensorFrontal = sensoresConfig.sensorFrontal;
@@ -71,21 +79,37 @@ void inicializarSensores(SensoresConfig sensoresConfig)
     printf("Sensores inicializados.\n");
 }
 
+/**
+ * @brief Lee el valor del sensor frontal (digital).
+ * @return 1 si detecta obstáculo, 0 si no.
+ */
 int leerSensorFrontal()
 {
     return gpio_get_level(sensorFrontal);
 }
 
+/**
+ * @brief Lee el valor del sensor derecho (digital).
+ * @return 1 si detecta obstáculo, 0 si no.
+ */
 int leerSensorDerecho()
 {
     return gpio_get_level(sensorDerecho);
 }
 
+/**
+ * @brief Lee el valor del sensor izquierdo (digital).
+ * @return 1 si detecta obstáculo, 0 si no.
+ */
 int leerSensorIzquierdo()
 {
     return gpio_get_level(sensorIzquierdo);
 }
 
+/**
+ * @brief Obtiene el conteo actual del sensor de rueda.
+ * @return Conteo de pulsos detectados.
+ */
 int obtenerCuentaSensorRueda()
 {
     int count = 0;
@@ -93,11 +117,20 @@ int obtenerCuentaSensorRueda()
     return count;
 }
 
+/**
+ * @brief Reinicia el conteo del sensor de rueda.
+ * @return ESP_OK si la operación fue exitosa.
+ */
 int reiniciarCuentaSensorRueda()
 {
     return pcnt_unit_clear_count(pulse_cnt_unit);
 }
 
+/**
+ * @brief Mide la distancia usando un sensor ultrasónico.
+ * Envía un pulso y mide el tiempo de respuesta del eco.
+ * @return Distancia en centímetros.
+ */
 int medirDistanciaSensorSonico()
 {
     int start_t = 0, end_t = 0;
@@ -118,6 +151,10 @@ int medirDistanciaSensorSonico()
     return distance;
 }
 
+/**
+ * @brief Obtiene todos los datos de los sensores y los agrupa en una estructura.
+ * @return Estructura SensoresData con los valores actuales de los sensores.
+ */
 SensoresData obtenerDatosSensores()
 {
     SensoresData datos;

@@ -272,7 +272,12 @@ void actualizarLaberinto(int fila, int columna, int valor)
     laberinto[fila][columna] = valor;
 }
 
-void manejarCambioDeCasilla()
+/**
+ * @brief Maneja el avance de una casilla. Si se alcanzan los pasos necesarios,
+ *        reinicia el contador, marca la casilla como visitada, actualiza la posición
+ *        y simula el avance de sensores.
+ */
+void manejarAvanceDeCasilla()
 {
     if (datosSensores.cuentaSensorRueda >= PASOS_AVANCE_DE_CASILLA)
     {
@@ -285,6 +290,10 @@ void manejarCambioDeCasilla()
     }
 }
 
+/**
+ * @brief Maneja el giro de 90 grados. Si se alcanzan los pasos necesarios,
+ *        reinicia el contador, actualiza el sentido, cambia el estado y simula el avance.
+ */
 void manejarGiroDe90Grados()
 {
     if (datosSensores.cuentaSensorRueda >= PASOS_GIRO_90_GRADOS)
@@ -299,6 +308,10 @@ void manejarGiroDe90Grados()
     }
 }
 
+/**
+ * @brief Simula el avance del robot cargando datos de sensores mockup.
+ *        Incrementa el paso de simulación.
+ */
 void simularAvance()
 {
     printf("SIMULAR AVANCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
@@ -313,6 +326,10 @@ void simularAvance()
     pasosMockup++;
 }
 
+/**
+ * @brief Imprime el sentido del carro en formato legible.
+ * @param sentido SentidoCarro a imprimir.
+ */
 void imprimirSentido(SentidoCarro sentido)
 {
     switch (sentido)
@@ -335,6 +352,11 @@ void imprimirSentido(SentidoCarro sentido)
     }
 }
 
+/**
+ * @brief Devuelve una cadena de texto correspondiente al estado del carro.
+ * @param estado EstadoCarro a convertir.
+ * @return Cadena con el nombre del estado.
+ */
 char *obtenerCadenaEstado(EstadoCarro estado)
 {
     switch (estado)
@@ -353,7 +375,7 @@ char *obtenerCadenaEstado(EstadoCarro estado)
 }
 
 /**
- * @brief Imprime el estado actual del robot y sus sensores
+ * @brief Imprime el estado actual del robot, su posición, sentidos y datos de sensores.
  */
 void imprimirEstadoRobot()
 {
@@ -371,6 +393,9 @@ void imprimirEstadoRobot()
     printf("Paso simulación: %d\n", pasosMockup);
 }
 
+/**
+ * @brief Máquina de estados principal del robot. Controla el flujo de avance, frenado, giro y detenido.
+ */
 void maquinaDeEstados()
 {
     switch (estado)
@@ -382,7 +407,7 @@ void maquinaDeEstados()
             detener();
             estado = FRENANDO;
         }
-        manejarCambioDeCasilla();
+        manejarAvanceDeCasilla();
         break;
     case FRENANDO:
         printf("Estado FRENANDO\n");

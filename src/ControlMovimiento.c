@@ -4,6 +4,7 @@
 #include "freertos/task.h"
 #include "ControlMovimiento.h"
 
+// Variables globales para los pines de control de los motores
 gpio_num_t motorIzquierdoEnable = 0;
 gpio_num_t motorDerechoEnable = 0;
 gpio_num_t motorIzquierdoInput1 = 0;
@@ -14,25 +15,30 @@ int detenido = 0;
 
 // Configuración Canal A (Motor Izquierdo)
 ledc_channel_config_t ledc_channel_a_config = {
-    .gpio_num = 0, // Placeholder, will be set in initialization
+    .gpio_num = 0, // Se asigna en la inicialización
     .speed_mode = LEDC_LOW_SPEED_MODE,
     .channel = LEDC_CHANNEL_0,
     .intr_type = LEDC_INTR_DISABLE,
     .timer_sel = LEDC_TIMER_0,
-    .duty = 0, // Start with duty cycle 0
+    .duty = 0, // Inicia con ciclo de trabajo 0
 };
 
 // Configuración Canal B (Motor Derecho)
 ledc_channel_config_t ledc_channel_b_config = {
-    .gpio_num = 0, // Placeholder, will be set in initialization
+    .gpio_num = 0, // Se asigna en la inicialización
     .speed_mode = LEDC_LOW_SPEED_MODE,
     .channel = LEDC_CHANNEL_1,
     .intr_type = LEDC_INTR_DISABLE,
     .timer_sel = LEDC_TIMER_0,
-    .duty = 0, // Start with duty cycle 0
+    .duty = 0, // Inicia con ciclo de trabajo 0
 };
 
-// Establece los pines del motor izquierdo
+/**
+ * @brief Establece los pines de control del motor izquierdo.
+ * @param input1 GPIO para IN1
+ * @param input2 GPIO para IN2
+ * @param inputEnable GPIO para Enable/PWM
+ */
 void setMotorIzquierdo(gpio_num_t input1, gpio_num_t input2, gpio_num_t inputEnable)
 {
     motorIzquierdoInput1 = input1;
@@ -40,7 +46,12 @@ void setMotorIzquierdo(gpio_num_t input1, gpio_num_t input2, gpio_num_t inputEna
     motorIzquierdoEnable = inputEnable;
 }
 
-// Establece los pines del motor derecho
+/**
+ * @brief Establece los pines de control del motor derecho.
+ * @param input1 GPIO para IN1
+ * @param input2 GPIO para IN2
+ * @param inputEnable GPIO para Enable/PWM
+ */
 void setMotorDerecho(gpio_num_t input1, gpio_num_t input2, gpio_num_t inputEnable)
 {
     motorDerechoInput1 = input1;
@@ -48,6 +59,9 @@ void setMotorDerecho(gpio_num_t input1, gpio_num_t input2, gpio_num_t inputEnabl
     motorDerechoEnable = inputEnable;
 }
 
+/**
+ * @brief Detiene ambos motores y marca el estado como detenido.
+ */
 void detener()
 {
     gpio_set_level(motorIzquierdoInput1, 0);
@@ -55,11 +69,14 @@ void detener()
     gpio_set_level(motorDerechoInput1, 0);
     gpio_set_level(motorDerechoInput2, 0);
 
-    vTaskDelay(pdMS_TO_TICKS(500)); // Wait for 5 seconds before starting
+    vTaskDelay(pdMS_TO_TICKS(500)); // Espera 500 ms antes de continuar
     detenido = 1;
     printf("Motores detenidos\n");
 }
 
+/**
+ * @brief Hace avanzar ambos motores hacia adelante.
+ */
 void avanzar()
 {
     gpio_set_level(motorIzquierdoInput1, 1);
@@ -70,6 +87,9 @@ void avanzar()
     detenido = 0;
 }
 
+/**
+ * @brief Hace retroceder ambos motores.
+ */
 void retroceder()
 {
     gpio_set_level(motorIzquierdoInput1, 0);
@@ -80,6 +100,9 @@ void retroceder()
     detenido = 0;
 }
 
+/**
+ * @brief Gira el robot a la derecha (motor izquierdo avanza, derecho retrocede).
+ */
 void girarDerecha()
 {
     gpio_set_level(motorIzquierdoInput1, 1);
@@ -90,6 +113,9 @@ void girarDerecha()
     detenido = 0;
 }
 
+/**
+ * @brief Gira el robot a la izquierda (motor derecho avanza, izquierdo retrocede).
+ */
 void girarIzquierda()
 {
     gpio_set_level(motorIzquierdoInput1, 0);
@@ -100,15 +126,19 @@ void girarIzquierda()
     detenido = 0;
 }
 
+/**
+ * @brief Ajusta la velocidad del motor izquierdo usando PWM.
+ * @param velocidad Valor de ciclo de trabajo (0-1023)
+ */
 void setVelocidadMotorIzquierdo(int velocidad)
 {
     if (velocidad < 0)
     {
-        velocidad = 0; // Ensure speed is not negative
+        velocidad = 0; // No permitir valores negativos
     }
     if (velocidad > 1023)
     {
-        velocidad = 1023; // Ensure speed does not exceed maximum for 10-bit resolution
+        velocidad = 1023; // Límite para resolución de 10 bits
     }
 
     ledc_set_duty(ledc_channel_a_config.speed_mode, ledc_channel_a_config.channel, velocidad);
@@ -116,15 +146,19 @@ void setVelocidadMotorIzquierdo(int velocidad)
     printf("Velocidad motor izquierdo: %d\n", velocidad);
 }
 
+/**
+ * @brief Ajusta la velocidad del motor derecho usando PWM.
+ * @param velocidad Valor de ciclo de trabajo (0-1023)
+ */
 void setVelocidadMotorDerecho(int velocidad)
 {
     if (velocidad < 0)
     {
-        velocidad = 0; // Ensure speed is not negative
+        velocidad = 0; // No permitir valores negativos
     }
     if (velocidad > 1023)
     {
-        velocidad = 1023; // Ensure speed does not exceed maximum for 10-bit resolution
+        velocidad = 1023; // Límite para resolución de 10 bits
     }
 
     ledc_set_duty(ledc_channel_b_config.speed_mode, ledc_channel_b_config.channel, velocidad);
@@ -132,40 +166,46 @@ void setVelocidadMotorDerecho(int velocidad)
     printf("Velocidad motor derecho: %d\n", velocidad);
 }
 
+/**
+ * @brief Indica si el robot está detenido.
+ * @return 1 si está detenido, 0 en caso contrario.
+ */
 int estaDetenido()
 {
     return detenido;
 }
 
+/**
+ * @brief Inicializa los pines y PWM para el control de los motores.
+ * @param controlMovParams Estructura con los pines y timer a usar.
+ */
 void inicializarControlMovimiento(ControlMovimientoConfig controlMovParams)
 {
-    // Set GPIO for right Motor
+    // Asigna los GPIO para el motor derecho
     motorDerechoInput1 = controlMovParams.rightMotorGpio1;
     motorDerechoInput2 = controlMovParams.rightMotorGpio2;
     motorDerechoEnable = controlMovParams.rightMotorGpioPwm;
 
-    // Set GPIO for left Motor
+    // Asigna los GPIO para el motor izquierdo
     motorIzquierdoInput1 = controlMovParams.leftMotorGpio1;
     motorIzquierdoInput2 = controlMovParams.leftMotorGpio2;
     motorIzquierdoEnable = controlMovParams.leftMotorGpioPwm;
 
-    // Set GPIO directions to be output
+    // Configura los GPIO como salida
     gpio_set_direction(motorIzquierdoInput1, GPIO_MODE_OUTPUT);
     gpio_set_direction(motorIzquierdoInput2, GPIO_MODE_OUTPUT);
     gpio_set_direction(motorDerechoInput1, GPIO_MODE_OUTPUT);
     gpio_set_direction(motorDerechoInput2, GPIO_MODE_OUTPUT);
 
-    // Initialize LEDC channels for PWM control
-    // ledc_timer_config_data.timer_num = controlMovParams.timerNumber;
+    // Inicializa los canales LEDC para PWM
     ledc_channel_a_config.gpio_num = motorIzquierdoEnable;
     ledc_channel_a_config.timer_sel = controlMovParams.timerNumber;
     ledc_channel_b_config.gpio_num = motorDerechoEnable;
     ledc_channel_b_config.timer_sel = controlMovParams.timerNumber;
 
-    // printf("%d\n", ledc_timer_config(&ledc_timer_config_data));
     printf("%d\n", ledc_channel_config(&ledc_channel_a_config));
     printf("%d\n", ledc_channel_config(&ledc_channel_b_config));
 
-    // prevent the car from move headless
+    // Detiene el robot al iniciar para evitar movimientos inesperados
     detener();
 }
