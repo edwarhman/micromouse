@@ -133,6 +133,7 @@ int reiniciarCuentaSensorRueda()
  */
 int medirDistanciaSensorSonico()
 {
+    vTaskDelay(100); // Retardo entre mediciones (100ms)
     int start_t = 0, end_t = 0;
     const int CONSTANTE_DISTANCIA = 58; // 1 cm = 58 ms
 
