@@ -308,6 +308,54 @@ void manejarGiroDe90Grados()
     }
 }
 
+void corregirTrayectoria()
+{
+    if (estado == AVANZANDO)
+    {
+        if (datosSensores.sensorIzquierdo == 0 && datosSensores.sensorDerecho == 1)
+        {
+            // Se está desviando a la derecha, corregir hacia la izquierda
+            corregirIzquierda();
+        }
+        else if (datosSensores.sensorDerecho == 0 && datosSensores.sensorIzquierdo == 1)
+        {
+            // Se está desviando a la izquierda, corregir hacia la derecha
+            corregirDerecha();
+        }
+        else if (datosSensores.sensorIzquierdo == 0 && datosSensores.sensorDerecho == 0)
+        {
+            // Está demasiado cerca de ambos lados, mantener recto o reducir velocidad
+            mantenerDerecho();
+        }
+        else
+        {
+            // Ambos sensores detectan libre, mantener trayectoria recta
+            mantenerDerecho();
+        }
+    }
+}
+
+void corregirDerecha()
+{
+    printf("Corregir trayectoria hacia la derecha.\n");
+    setVelocidadMotorDerecho(512); // Ajustar velocidad del motor derecho
+    setVelocidadMotorIzquierdo(256);
+}
+
+void corregirIzquierda()
+{
+    printf("Corregir trayectoria hacia la izquierda.\n");
+    setVelocidadMotorDerecho(256);
+    setVelocidadMotorIzquierdo(512);
+}
+
+void mantenerDerecho()
+{
+    printf("Mantener trayectoria recta.\n");
+    setVelocidadMotorDerecho(512); // Ajustar velocidad de ambos motores
+    setVelocidadMotorIzquierdo(512);
+}
+
 /**
  * @brief Simula el avance del robot cargando datos de sensores mockup.
  *        Incrementa el paso de simulación.
